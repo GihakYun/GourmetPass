@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 251229 현재는 지금은 회원가입을 위해 암호화기만 활성화하고, 나머지는 열어두는 설정 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+<!-- 암호화기 = BCryptPasswordEncoder -->
+	<bean id="bcryptPasswordEncoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+
+	<security:http>
+		<security:csrf disabled="true" />
+		<security:intercept-url pattern="/**"
+			access="permitAll" />
+		<security:form-login />
+	</security:http>
+
+	<security:authentication-manager>
+	</security:authentication-manager>
+
+</beans>

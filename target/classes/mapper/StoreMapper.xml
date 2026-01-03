@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.uhi.gourmet.store.StoreMapper">
+
+    <insert id="insertStore" parameterType="com.uhi.gourmet.store.StoreVO">
+        INSERT INTO STORE (
+            store_id,
+            user_id,
+            store_name,
+            store_category,
+            store_tel,
+            store_zip,
+            store_addr1,
+            store_addr2,
+            store_lat,
+            store_lon
+        ) VALUES (
+            SEQ_STORE.NEXTVAL,   -- 가게 번호 시퀀스
+            #{user_id},           -- MEMBERS 테이블과 연결되는 외래키 (점주 아이디)
+            #{store_name},
+            #{store_category},
+            #{store_tel},
+            #{store_zip},
+            #{store_addr1},
+            #{store_addr2},
+            #{store_lat},
+            #{store_lon}
+        )
+    </insert>
+
+</mapper>

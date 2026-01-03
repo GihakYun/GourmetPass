@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.uhi.gourmet.member.MemberMapper">
+
+<!-- MemberMapper.java의 getPassword() 메서드 구현. 반환값도 일치해야 함 -->
+    <select id="getPassword" resultType="string">
+        SELECT user_pw FROM MEMBERS 
+        WHERE user_id = #{user_id} AND enabled = 'Y'
+    </select>
+
+<!-- MemberMapper.java의 join() 메서드 구현. void니까 반환값 X -->
+    <insert id="join">
+        INSERT INTO MEMBERS (
+            user_id, 
+            user_pw, 
+            user_nm, 
+            user_email, 
+            user_tel, 
+            user_zip, 
+            user_addr1, 
+            user_addr2, 
+            store_lat, 
+            store_lon
+        ) VALUES (
+            #{user_id}, 
+            #{user_pw}, 
+            #{user_nm},
+            #{user_email, jdbcType=VARCHAR}, 
+            #{user_tel}, 
+            #{user_zip, jdbcType=VARCHAR}, 
+            #{user_addr1, jdbcType=VARCHAR}, 
+            #{user_addr2, jdbcType=VARCHAR}, 
+            #{store_lat, jdbcType=NUMERIC}, 
+            #{store_lon, jdbcType=NUMERIC}
+        )
+    </insert>
+    
+    <select id="idCheck" resultType="int">
+		SELECT COUNT(*) FROM MEMBERS 
+		WHERE user_id = #{user_id}
+	</select>
+	
+	<insert id="insertStore">
+        INSERT INTO STORE (
+            store_id,        user_id,         store_name, 
+            store_category, 
+            store_tel, 
+            store_zip, 
+            store_addr1, 
+            store_addr2, 
+            store_lat, 
+            store_lon, 
+            store_cnt,       res_unit         ) VALUES (
+            SEQ_STORE.NEXTVAL, #{user_id}, 
+            #{store_name}, 
+            #{store_category}, 
+            #{store_tel, jdbcType=VARCHAR}, 
+            #{store_zip, jdbcType=VARCHAR}, 
+            #{store_addr1, jdbcType=VARCHAR}, 
+            #{store_addr2, jdbcType=VARCHAR}, 
+            #{store_lat, jdbcType=NUMERIC}, 
+            #{store_lon, jdbcType=NUMERIC}, 
+            0, 
+            30
+        )
+    </insert>
+
+</mapper>
