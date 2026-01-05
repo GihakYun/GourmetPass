@@ -7,6 +7,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/store")
@@ -53,4 +59,35 @@ public class StoreController {
         return "store/store_detail";
     }
     
+    /*
+     * [AJAX 응답 메서드] 
+     * produces = "application/json; charset=UTF-8" 을 추가하여 
+     * 한글 깨짐 및 포맷 문제를 명시적으로 방지합니다.
+     */
+    @GetMapping(value = "/api/timeSlots", produces = "application/json; charset=UTF-8")
+    @ResponseBody 
+    public List<String> getTimeSlots(@RequestParam("store_id") int storeId) {
+        List<String> slots = new ArrayList<>();
+        try {
+            StoreVO store = storeMapper.getStoreDetail(storeId);
+            
+            // DB 데이터가 없는 경우 빈 리스트 반환
+            if (store == null || store.getOpen_time() == null || store.getClose_time() == null) {
+                return slots;
+            }
+
+            LocalTime open = LocalTime.parse(store.getOpen_time());
+            LocalTime close = LocalTime.parse(store.getClose_time());
+            int unit = store.getRes_unit();
+
+            LocalTime current = open;
+            while (current.isBefore(close)) {
+                slots.add(current.toString());
+                current = current.plusMinutes(unit);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // 서버 콘솔에 에러 출력
+        }
+        return slots; 
+    }
 }

@@ -21,4 +21,7 @@ public interface StoreMapper {
 
 	// [추가] 점주 가입 시 가게 정보를 등록하는 메서드
 	void insertStore(StoreVO store);
+	
+	// [추가] 유저 ID로 내 가게 정보 찾기 (점주 마이페이지용)
+    StoreVO getStoreByUserId(String user_id);
 }

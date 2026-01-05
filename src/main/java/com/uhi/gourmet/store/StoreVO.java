@@ -17,7 +17,8 @@ public class StoreVO {
     private int store_cnt;          // 조회수 (기본 0)
     
     // 추가된 필드 (null 허용)
-    private String store_time;      // 영업시간
+    private String open_time;  // 예: "11:00"
+    private String close_time; // 예: "22:00"
     private int res_unit;           // 예약단위(분)
     private String store_desc;      // 설명
     private String store_img;       // 이미지 경로

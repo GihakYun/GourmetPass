@@ -39,7 +39,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         
         // 1. DB에서 회원 정보 조회
         // (사용자가 입력한 아이디 'username'으로 내 테이블인 MemberVO를 찾아옵니다)
-        MemberVO vo = memberMapper.selectMember(username); 
+        MemberVO vo = memberMapper.getMemberById(username); 
 
         // 2. 아이디가 없으면? (회원이 아님)
         if (vo == null) {

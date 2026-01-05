@@ -3,47 +3,59 @@
 
 <mapper namespace="com.uhi.gourmet.member.MemberMapper">
 
-	<!-- MemberMapper.java의 getPassword() 메서드 구현. 반환값도 일치해야 함 -->
-	<select id="getPassword" resultType="string">
-		SELECT user_pw FROM MEMBERS
-		WHERE user_id = #{user_id} AND enabled = 'Y'
-	</select>
+    <select id="getPassword" resultType="string">
+        SELECT user_pw FROM MEMBERS
+        WHERE user_id = #{user_id} AND enabled = 'Y'
+    </select>
 
-	<!-- MemberMapper.java의 join() 메서드 구현. void니까 반환값 X -->
-	<insert id="join">
-		INSERT INTO MEMBERS (
-		user_id,
-		user_pw,
-		user_nm,
-		user_email,
-		user_tel,
-		user_zip,
-		user_addr1,
-		user_addr2,
-		user_lat,
-		user_lon
-		) VALUES (
-		#{user_id},
-		#{user_pw},
-		#{user_nm},
-		#{user_email, jdbcType=VARCHAR},
-		#{user_tel},
-		#{user_zip, jdbcType=VARCHAR},
-		#{user_addr1, jdbcType=VARCHAR},
-		#{user_addr2, jdbcType=VARCHAR},
-		#{user_lat, jdbcType=NUMERIC},
-		#{user_lon, jdbcType=NUMERIC}
-		)
-	</insert>
+    <insert id="join">
+        INSERT INTO MEMBERS (
+            user_id, user_pw, user_nm, user_email, user_tel,
+            user_zip, user_addr1, user_addr2, user_lat, user_lon,
+            user_role, enabled, user_regdate
+        ) VALUES (
+            #{user_id, jdbcType=VARCHAR},
+            #{user_pw, jdbcType=VARCHAR},
+            #{user_nm, jdbcType=VARCHAR},
+            #{user_email, jdbcType=VARCHAR},
+            #{user_tel, jdbcType=VARCHAR},
+            #{user_zip, jdbcType=VARCHAR},
+            #{user_addr1, jdbcType=VARCHAR},
+            #{user_addr2, jdbcType=VARCHAR},
+            #{user_lat, jdbcType=NUMERIC},
+            #{user_lon, jdbcType=NUMERIC},
+            #{user_role, jdbcType=VARCHAR},
+            'Y',
+            SYSDATE
+        )
+    </insert>
 
-	<select id="idCheck" resultType="int">
-		SELECT COUNT(*) FROM MEMBERS
-		WHERE user_id = #{user_id}
-	</select>
+    <select id="idCheck" resultType="int">
+        SELECT COUNT(*) FROM MEMBERS
+        WHERE user_id = #{user_id}
+    </select>
 
-	<select id="selectMember"
-		resultType="com.uhi.gourmet.member.MemberVO">
-		SELECT * FROM MEMBERS WHERE user_id = #{user_id}
-	</select>
+    <select id="getMemberById" resultType="com.uhi.gourmet.member.MemberVO">
+        SELECT * FROM MEMBERS WHERE user_id = #{user_id}
+    </select>
+    
+    <update id="updateMember" parameterType="com.uhi.gourmet.member.MemberVO">
+        UPDATE MEMBERS
+        SET 
+            user_nm = #{user_nm, jdbcType=VARCHAR},
+            user_email = #{user_email, jdbcType=VARCHAR},
+            user_tel = #{user_tel, jdbcType=VARCHAR},
+            user_zip = #{user_zip, jdbcType=VARCHAR},
+            user_addr1 = #{user_addr1, jdbcType=VARCHAR},
+            user_addr2 = #{user_addr2, jdbcType=VARCHAR},
+            user_lat = #{user_lat, jdbcType=NUMERIC},
+            user_lon = #{user_lon, jdbcType=NUMERIC}
+        WHERE user_id = #{user_id}
+    </update>
+
+    <delete id="deleteMember">
+        DELETE FROM MEMBERS 
+        WHERE user_id = #{user_id}
+    </delete>
 
 </mapper>

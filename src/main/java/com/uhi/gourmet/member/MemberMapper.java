@@ -2,19 +2,23 @@ package com.uhi.gourmet.member;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.uhi.gourmet.store.StoreVO;
-
 public interface MemberMapper {
 
-	// [로그인용] 암호화된 비밀번호 가져오기
-	String getPassword(@Param("user_id") String user_id);
+    // 1. 비밀번호 조회
+    String getPassword(@Param("user_id") String user_id);
 
-	// [회원가입용] 회원 정보 저장하기
-	void join(MemberVO vo);
+    // 2. 회원 가입
+    void join(MemberVO vo);
 
-	// [회원가입용] 아이디 중복확인
-	int idCheck(String user_id);
+    // 3. 아이디 중복 체크
+    int idCheck(String user_id);
 
-	// 아이디를 통해 해당 유저의 모든 정보(아이디, 비번, 권한 포함)를 가져오는 메서드
-	MemberVO selectMember(String user_id);
+    // 4. 회원 상세 정보 조회
+    MemberVO getMemberById(String user_id);
+
+    // 5. 회원 정보 수정
+    void updateMember(MemberVO vo);
+
+    // 6. 회원 탈퇴 (추가!)
+    void deleteMember(String user_id);
 }
