@@ -15,11 +15,12 @@ public class StoreVO {
     private Double store_lat;       // 위도
     private Double store_lon;       // 경도
     private int store_cnt;          // 조회수 (기본 0)
-    
-    // 추가된 필드 (null 허용)
-    private String open_time;  // 예: "11:00"
-    private String close_time; // 예: "22:00"
-    private int res_unit;           // 예약단위(분)
     private String store_desc;      // 설명
     private String store_img;       // 이미지 경로
+    
+    //예약 시간 설정용 필드
+    private String open_time;  // 예: "11:00"
+    private String close_time; // 예: "22:00"
+    private int res_unit;           // 예약 단위 (분,30 or 60으로 제한해야 할 듯)
+
 }

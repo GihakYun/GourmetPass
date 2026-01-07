@@ -19,9 +19,24 @@ public interface StoreMapper {
 	// 조회수 올리기
 	void updateViewCount(int store_id);
 
-	// [추가] 점주 가입 시 가게 정보를 등록하는 메서드
+	// 점주 가입 시 가게 정보를 등록하는 메서드
 	void insertStore(StoreVO store);
 	
-	// [추가] 유저 ID로 내 가게 정보 찾기 (점주 마이페이지용)
+	// user_id로 내 가게 정보 찾기 (점주 마이페이지용)
     StoreVO getStoreByUserId(String user_id);
+
+    // [추가] 가게 정보 수정
+    void updateStore(StoreVO store);
+
+    // [추가] 메뉴 등록
+    void insertMenu(MenuVO menu);
+
+    // [추가] 메뉴 삭제
+    void deleteMenu(int menu_id);
+
+    // [추가] 메뉴 수정 (이름, 가격, 대표메뉴 여부 등)
+    void updateMenu(MenuVO menu);
+    
+    // [추가] 메뉴 단건 조회 (수정 화면용)
+    MenuVO getMenuDetail(int menu_id);
 }
