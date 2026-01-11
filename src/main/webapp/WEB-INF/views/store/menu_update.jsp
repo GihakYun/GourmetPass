@@ -4,12 +4,23 @@
 
 <div style="width: 50%; margin: 50px auto; padding: 30px; border: 1px solid #ddd; border-radius: 10px;">
     <h2 align="center">✏️ 메뉴 정보 수정</h2>
-    <form action="${pageContext.request.contextPath}/store/menu/update" method="post" enctype="multipart/form-data">
+    
+    <%-- 
+        [수정 포인트] 
+        enctype="multipart/form-data" 사용 시 CSRF 필터가 파라미터를 읽을 수 있도록 
+        action URL 뒤에 직접 토큰을 쿼리 스트링으로 포함시킵니다. 
+    --%>
+    <form action="${pageContext.request.contextPath}/store/menu/update?${_csrf.parameterName}=${_csrf.token}" 
+          method="post" 
+          enctype="multipart/form-data">
+          
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
         
         <input type="hidden" name="menu_id" value="${menu.menu_id}">
         <input type="hidden" name="store_id" value="${menu.store_id}">
-        <input type="hidden" name="menu_img" value="${menu.menu_img}"> <div style="margin-bottom: 15px;">
+        <input type="hidden" name="menu_img" value="${menu.menu_img}"> 
+        
+        <div style="margin-bottom: 15px;">
             <label>메뉴명</label>
             <input type="text" name="menu_name" value="${menu.menu_name}" required style="width: 100%; padding: 8px;">
         </div>

@@ -29,16 +29,21 @@
 
 	<select id="selectMyWaitList"
 		resultType="com.uhi.gourmet.wait.WaitVO">
-		SELECT * FROM WAIT WHERE user_id = #{user_id} ORDER BY
-		wait_date DESC
+		SELECT w.*, s.store_name 
+		FROM WAIT w
+		JOIN STORE s ON w.store_id = s.store_id
+		WHERE w.user_id = #{user_id} 
+		ORDER BY w.wait_date DESC
 	</select>
 
 	<select id="selectStoreWaitList"
 		resultType="com.uhi.gourmet.wait.WaitVO">
-		SELECT * FROM WAIT
-		WHERE store_id = #{store_id}
-		AND TO_CHAR(wait_date, 'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')
-		ORDER BY wait_num ASC
+		SELECT w.*, s.store_name 
+		FROM WAIT w
+		JOIN STORE s ON w.store_id = s.store_id
+		WHERE w.store_id = #{store_id}
+		AND TO_CHAR(w.wait_date, 'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')
+		ORDER BY w.wait_num ASC
 	</select>
 
 	<update id="updateWaitStatus">

@@ -22,6 +22,5 @@ public interface WaitMapper {
     List<WaitVO> selectStoreWaitList(int store_id);
     
     // 6. 웨이팅 상태 업데이트 (호출, 입장완료, 취소 등)
-    // 매개변수가 2개이므로 @Param 어노테이션을 사용하여 XML과 매핑함
     void updateWaitStatus(@Param("wait_id") int wait_id, @Param("status") String status);
 }

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.uhi.gourmet.wait.WaitService; // [추가] WaitService 임포트
+import com.uhi.gourmet.wait.WaitService;
 
 @Controller
 @RequestMapping("/store")
@@ -31,14 +31,11 @@ public class StoreController {
     @Autowired
     private StoreService storeService;
 
-    // [추가] 실시간 대기 팀수 조회를 위한 서비스 주입
     @Autowired
     private WaitService waitService;
 
     @Value("${kakao.js.key}")
     private String kakaoJsKey;
-
-    // ================= [맛집 조회 (Public)] =================
 
     // 1. 맛집 목록 조회
     @GetMapping("/list")
@@ -49,7 +46,6 @@ public class StoreController {
             Model model) {
         
         List<StoreVO> storeList = storeService.getStoreList(category, region, keyword);
-        
         model.addAttribute("storeList", storeList); 
         model.addAttribute("category", category);
         model.addAttribute("region", region);
@@ -58,20 +54,17 @@ public class StoreController {
         return "store/store_list";
     }
 
-    // 2. 맛집 상세 정보 조회 (시간표 및 대기 팀수 로직 추가됨)
+    // 2. 맛집 상세 정보 조회
     @GetMapping("/detail")
     public String storeDetail(@RequestParam("storeId") int storeId, Model model) {
-        // 조회수 증가 및 상세 데이터 로드
         storeService.plusViewCount(storeId);
         
         StoreVO store = storeService.getStoreDetail(storeId);
         List<MenuVO> menuList = storeService.getMenuList(storeId);
         
-        // [추가] 실시간 현재 대기 팀수 조회
         int currentWaitCount = waitService.get_current_wait_count(storeId);
         model.addAttribute("currentWaitCount", currentWaitCount);
 
-        // 일반 회원을 위한 초기 시간표 생성
         if (store != null) {
             List<String> timeSlots = generateTimeSlots(store);
             model.addAttribute("timeSlots", timeSlots);
@@ -84,7 +77,6 @@ public class StoreController {
         return "store/store_detail";
     }
     
-    // 3. [AJAX] 예약 타임슬롯 생성 (기존 유지)
     @GetMapping(value = "/api/timeSlots", produces = "application/json; charset=UTF-8")
     @ResponseBody 
     public List<String> getTimeSlots(@RequestParam("store_id") int storeId) {
@@ -92,7 +84,7 @@ public class StoreController {
         return generateTimeSlots(store);
     }
 
-    // ================= [가게 정보 관리 (Owner Only)] =================
+    // ================= [가게 정보 관리] =================
 
     @GetMapping("/register")
     public String registerStorePage() {
@@ -132,7 +124,7 @@ public class StoreController {
         return "redirect:/member/mypage";
     }
 
-    // ================= [메뉴 관리 (CRUD)] =================
+    // ================= [메뉴 관리] =================
 
     @GetMapping("/menu/register")
     public String menuRegisterPage(@RequestParam("store_id") int storeId, Model model, Principal principal) {
@@ -144,7 +136,7 @@ public class StoreController {
     }
 
     @PostMapping("/menu/register")
-    public String menuRegisterProcess(@ModelAttribute("menuVO") MenuVO menuVO, 
+    public String menuRegisterProcess(@ModelAttribute MenuVO menuVO, 
                                       @RequestParam(value="file", required=false) MultipartFile file,
                                       HttpServletRequest request,
                                       Principal principal) {
@@ -171,7 +163,7 @@ public class StoreController {
     }
     
     @PostMapping("/menu/update")
-    public String menuUpdateProcess(@ModelAttribute("vo") MenuVO vo, 
+    public String menuUpdateProcess(@ModelAttribute MenuVO vo, 
                                     @RequestParam(value="file", required=false) MultipartFile file,
                                     HttpServletRequest request,
                                     Principal principal) {
@@ -184,7 +176,6 @@ public class StoreController {
 
     // ================= [Private Helpers] =================
 
-    // [중요] 타임슬롯 생성 공통 로직
     private List<String> generateTimeSlots(StoreVO store) {
         List<String> slots = new ArrayList<>();
         if (store == null || store.getOpen_time() == null || store.getClose_time() == null) {
@@ -192,7 +183,6 @@ public class StoreController {
         }
 
         try {
-            // HH:mm 또는 HH:mm:ss 형식 대응
             DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("HH:mm[:ss]");
             DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
@@ -211,7 +201,6 @@ public class StoreController {
         return slots;
     }
 
-    // 파일 업로드 (기존 유지)
     private String uploadFile(MultipartFile file, HttpServletRequest request) {
         String uploadPath = request.getSession().getServletContext().getRealPath("/resources/upload");
         File dir = new File(uploadPath);

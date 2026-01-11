@@ -8,38 +8,32 @@
 	<bean id="bcryptPasswordEncoder"
 		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 
+	<bean id="loginSuccessHandler" class="com.uhi.gourmet.member.LoginSuccessHandler" />
+
 	<security:http auto-config="true" use-expressions="true">
 		<security:csrf disabled="false" />
 
-		<security:intercept-url
-			pattern="/member/mypage**"
-			access="hasAnyRole('ROLE_USER', 'ROLE_OWNER')" />
-		<security:intercept-url
-			pattern="/member/edit**"
-			access="hasAnyRole('ROLE_USER', 'ROLE_OWNER')" />
+		<security:intercept-url pattern="/member/mypage**" access="hasAnyRole('ROLE_USER', 'ROLE_OWNER')" />
+		<security:intercept-url pattern="/member/edit**" access="hasAnyRole('ROLE_USER', 'ROLE_OWNER')" />
+		
+		<security:intercept-url pattern="/store/list" access="permitAll" />
+		<security:intercept-url pattern="/store/detail" access="permitAll" />
+		<security:intercept-url pattern="/store/api/**" access="permitAll" />
+		
+		<security:intercept-url pattern="/store/**" access="hasRole('ROLE_OWNER')" />
 
-		<security:intercept-url
-			pattern="/book/manage**"
-			access="hasRole('ROLE_OWNER')" />
-		<security:intercept-url
-			pattern="/wait/updateStatus**"
-			access="hasRole('ROLE_OWNER')" />
+		<security:intercept-url pattern="/book/manage**" access="hasRole('ROLE_OWNER')" />
+		<security:intercept-url pattern="/wait/updateStatus**" access="hasRole('ROLE_OWNER')" />
+		<security:intercept-url pattern="/wait/register**" access="hasRole('ROLE_USER')" />
+		<security:intercept-url pattern="/wait/myStatus**" access="hasRole('ROLE_USER')" />
 
-		<security:intercept-url
-			pattern="/wait/register**"
-			access="hasRole('ROLE_USER')" />
-		<security:intercept-url
-			pattern="/wait/myStatus**"
-			access="hasRole('ROLE_USER')" />
-
-		<security:intercept-url pattern="/**"
-			access="permitAll" />
+		<security:intercept-url pattern="/**" access="permitAll" />
 
 		<security:form-login login-page="/member/login"
 			login-processing-url="/login" 
 			username-parameter="username"
 			password-parameter="password" 
-			default-target-url="/"
+			authentication-success-handler-ref="loginSuccessHandler"
 			authentication-failure-url="/member/login?error=true" />
 
 		<security:logout logout-url="/logout"
@@ -49,10 +43,8 @@
 	</security:http>
 
 	<security:authentication-manager>
-		<security:authentication-provider
-			user-service-ref="customUserDetailsService">
-			<security:password-encoder
-				ref="bcryptPasswordEncoder" />
+		<security:authentication-provider user-service-ref="customUserDetailsService">
+			<security:password-encoder ref="bcryptPasswordEncoder" />
 		</security:authentication-provider>
 	</security:authentication-manager>
 </beans>

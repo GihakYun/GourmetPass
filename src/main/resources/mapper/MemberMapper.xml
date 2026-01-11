@@ -5,7 +5,6 @@
 
 <mapper namespace="com.uhi.gourmet.member.MemberMapper">
 
-	<!-- 1. 비밀번호 조회 (로그인 시 사용) -->
 	<select id="getPassword" resultType="String">
 		SELECT user_pw
 		FROM MEMBERS
@@ -13,67 +12,57 @@
 		AND enabled = 'Y'
 	</select>
 
-	<!-- 2. 회원 가입 -->
 	<insert id="join">
 		INSERT INTO MEMBERS (
-		user_id, user_pw, user_nm, user_email, user_tel,
-		user_zip, user_addr1, user_addr2, user_lat, user_lon,
-		user_role, enabled, user_regdate
+			user_id, user_pw, user_nm, user_email, user_tel,
+			user_zip, user_addr1, user_addr2, user_lat, user_lon,
+			user_role, enabled, user_regdate
 		) VALUES (
-		#{user_id},
-		#{user_pw},
-		#{user_nm},
-		#{user_email},
-		#{user_tel},
-		#{user_zip, jdbcType=VARCHAR},
-		#{user_addr1, jdbcType=VARCHAR},
-		#{user_addr2, jdbcType=VARCHAR},
-		#{user_lat, jdbcType=NUMERIC},
-		#{user_lon, jdbcType=NUMERIC},
-		#{user_role},
-		'Y',
-		SYSDATE
+			#{user_id},
+			#{user_pw},
+			#{user_nm},
+			#{user_email, jdbcType=VARCHAR}, #{user_tel},
+			#{user_zip, jdbcType=VARCHAR},
+			#{user_addr1, jdbcType=VARCHAR},
+			#{user_addr2, jdbcType=VARCHAR},
+			#{user_lat, jdbcType=NUMERIC},
+			#{user_lon, jdbcType=NUMERIC},
+			#{user_role},
+			'Y',
+			SYSDATE
 		)
 	</insert>
 
-	<!-- 3. 아이디 중복 체크 -->
 	<select id="idCheck" resultType="int">
 		SELECT COUNT(*)
 		FROM MEMBERS
 		WHERE user_id = #{user_id}
 	</select>
 
-	<!-- 4. 회원 상세 정보 조회 -->
-	<select id="getMemberById"
-		resultType="com.uhi.gourmet.member.MemberVO">
+	<select id="getMemberById" resultType="com.uhi.gourmet.member.MemberVO">
 		SELECT *
 		FROM MEMBERS
 		WHERE user_id = #{user_id}
 	</select>
 
-	<!-- 5. 회원 정보 수정 (핵심 수정!) -->
-	<!-- <set> 태그를 쓰면 마지막 콤마(,)를 자동으로 제거해줍니다. -->
 	<update id="updateMember">
 		UPDATE MEMBERS
 		<set>
 			user_nm = #{user_nm},
-			user_email = #{user_email},
+			user_email = #{user_email, jdbcType=VARCHAR},
 			user_tel = #{user_tel},
-			user_zip = #{user_zip},
-			user_addr1 = #{user_addr1},
-			user_addr2 = #{user_addr2},
-			user_lat = #{user_lat},
-			user_lon = #{user_lon},
-
-			<!-- 비밀번호가 비어있지 않을 때만 업데이트 -->
+			user_zip = #{user_zip, jdbcType=VARCHAR},
+			user_addr1 = #{user_addr1, jdbcType=VARCHAR},
+			user_addr2 = #{user_addr2, jdbcType=VARCHAR},
+			user_lat = #{user_lat, jdbcType=NUMERIC},
+			user_lon = #{user_lon, jdbcType=NUMERIC},
 			<if test="user_pw != null and user_pw != ''">
-				user_pw = #{user_pw}
+				, user_pw = #{user_pw}
 			</if>
 		</set>
 		WHERE user_id = #{user_id}
 	</update>
 
-	<!-- 6. 회원 탈퇴 -->
 	<delete id="deleteMember">
 		DELETE FROM MEMBERS
 		WHERE user_id = #{user_id}

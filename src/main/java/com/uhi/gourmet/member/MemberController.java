@@ -114,21 +114,30 @@ public class MemberController {
         MemberVO member = memberService.getMember(user_id);
         model.addAttribute("member", member);
 
+        // [백엔드 포인트] 권한별 분기 처리
         if (request.isUserInRole("ROLE_OWNER")) {
             StoreVO store = storeMapper.getStoreByUserId(user_id);
-            model.addAttribute("store", store);
+            
+            // 점주 권한이지만 매장 정보가 아직 등록되지 않은 경우를 대비한 방어 로직
             if (store != null) {
-                // StoreMapper의 메서드명을 getMenuList로 통일
+                model.addAttribute("store", store);
                 model.addAttribute("menuList", storeMapper.getMenuList(store.getStore_id()));
+                
                 List<BookVO> store_book_list = book_service.get_store_book_list(store.getStore_id());
                 model.addAttribute("store_book_list", store_book_list);
+            } else {
+                model.addAttribute("noStoreMsg", "등록된 매장 정보가 없습니다.");
             }
             return "member/mypage_owner";
         } else {
+            // 일반 사용자 데이터 바인딩
             List<BookVO> my_book_list = book_service.get_my_book_list(user_id);
             model.addAttribute("my_book_list", my_book_list);
+            
+            // 이전에 수정한 WaitVO(가게이름 포함)를 리스트로 가져옵니다.
             List<WaitVO> my_wait_list = wait_service.get_my_wait_list(user_id);
             model.addAttribute("my_wait_list", my_wait_list);
+            
             return "member/mypage";
         }
     }
