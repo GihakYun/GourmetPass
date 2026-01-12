@@ -6,9 +6,12 @@
 
 <%-- 맛집 목록 전용 스타일 및 스크립트 연결 --%>
 <link rel="stylesheet" href="<c:url value='/resources/css/store_list.css'/>">
+<%-- main.css의 카드 스타일을 공유하기 위해 추가 연결 --%>
+<link rel="stylesheet" href="<c:url value='/resources/css/main.css'/>">
 <script src="<c:url value='/resources/js/store_list.js'/>"></script>
 
 <div class="list-wrapper">
+    <%-- 상단 필터 섹션 --%>
     <div class="filter-card">
         <form id="filterForm" action="${pageContext.request.contextPath}/store/list" method="get">
             <div class="filter-row">
@@ -26,6 +29,7 @@
                     <label>📂 카테고리</label>
                     <input type="hidden" name="category" id="selectedCategory" value="${category}">
                     <div class="chip-group">
+                        <%-- [v1.0.4 수정] onclick 이벤트 내의 역슬래시(\) 제거 --%>
                         <div class="cat-chip ${empty category ? 'active' : ''}" onclick="selectCategory('')">전체</div>
                         <div class="cat-chip ${category == '한식' ? 'active' : ''}" onclick="selectCategory('한식')">한식</div>
                         <div class="cat-chip ${category == '일식' ? 'active' : ''}" onclick="selectCategory('일식')">일식</div>
@@ -43,10 +47,12 @@
         </form>
     </div>
 
+    <%-- 맛집 그리드 섹션 --%>
     <div class="store-grid">
         <c:choose>
             <c:when test="${not empty storeList}">
                 <c:forEach var="store" items="${storeList}">
+                    <%-- main.jsp와 카드 구조 통일 --%>
                     <div class="store-card" onclick="location.href='detail?storeId=${store.store_id}'">
                         <div class="store-img-box">
                             <c:choose>
@@ -57,15 +63,17 @@
                             </c:choose>
                         </div>
                         <div class="store-info">
-                            <div class="store-cat-row">
-                                <span class="cat-text">${store.store_category}</span>
+                            <div class="store-cat">${store.store_category}</div>
+                            <div class="store-name-row">
+                                <h3 class="store-name">${store.store_name}</h3>
                                 <c:if test="${store.store_cnt >= 100}"><span class="hot-badge">HOT</span></c:if>
                             </div>
-                            <h3 class="store-name">${store.store_name}</h3>
                             <p class="store-addr">${store.store_addr1}</p>
-                            <div class="store-footer">
+                            
+                            <%-- 통계 정보 한 줄에 배치 (별점, 리뷰수 포함) --%>
+                            <div class="store-stats">
+                                <span>⭐ ${store.avg_rating} (${store.review_cnt})</span>
                                 <span class="view-cnt">👀 조회 ${store.store_cnt}</span>
-                                <span class="btn-detail-link">상세보기 ❯</span>
                             </div>
                         </div>
                     </div>

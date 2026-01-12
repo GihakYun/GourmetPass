@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.uhi.gourmet.wait.WaitService;
+import com.uhi.gourmet.book.BookService; // [추가] 예약 서비스 임포트
 import com.uhi.gourmet.review.ReviewService; 
 import com.uhi.gourmet.review.ReviewVO;      
 
@@ -36,6 +37,9 @@ public class StoreController {
 
     @Autowired
     private WaitService waitService;
+
+    @Autowired
+    private BookService bookService; // [추가] 예약 서비스 주입
 
     @Autowired
     private ReviewService reviewService; 
@@ -60,7 +64,7 @@ public class StoreController {
         return "store/store_list";
     }
 
-    // 2. 맛집 상세 정보 조회 (리뷰 통계, 목록 및 작성 권한 체크 추가)
+    // 2. 맛집 상세 정보 조회
     @GetMapping("/detail")
     public String storeDetail(@RequestParam("storeId") int storeId, Model model, Principal principal) {
         storeService.plusViewCount(storeId);
@@ -68,25 +72,24 @@ public class StoreController {
         StoreVO store = storeService.getStoreDetail(storeId);
         List<MenuVO> menuList = storeService.getMenuList(storeId);
         
-        // 실시간 현재 대기 팀수 조회
         int currentWaitCount = waitService.get_current_wait_count(storeId);
         model.addAttribute("currentWaitCount", currentWaitCount);
 
-        // 리뷰 통계(평균 별점, 총 리뷰 수) 조회 및 세팅
         Map<String, Object> stats = reviewService.getReviewStats(storeId);
         if (store != null && stats != null) {
-            store.setReview_count(Integer.parseInt(String.valueOf(stats.get("review_count"))));
-            store.setAvg_rating(Double.parseDouble(String.valueOf(stats.get("avg_rating"))));
+            Object cntVal = stats.get("review_cnt");
+            Object rateVal = stats.get("avg_rating");
+
+            store.setReview_cnt(cntVal != null ? Integer.parseInt(String.valueOf(cntVal)) : 0);
+            store.setAvg_rating(rateVal != null ? Double.parseDouble(String.valueOf(rateVal)) : 0.0);
             
             List<String> timeSlots = generateTimeSlots(store);
             model.addAttribute("timeSlots", timeSlots);
         }
 
-        // 해당 가게의 리뷰 리스트 조회
         List<ReviewVO> reviewList = reviewService.getStoreReviews(storeId);
         model.addAttribute("reviewList", reviewList);
 
-        // [추가] 리뷰 작성 권한 체크 (로그인 상태일 때만 체크)
         boolean canWriteReview = false;
         if (principal != null) {
             canWriteReview = reviewService.checkReviewEligibility(principal.getName(), storeId);
@@ -105,6 +108,24 @@ public class StoreController {
     public List<String> getTimeSlots(@RequestParam("store_id") int storeId) {
         StoreVO store = storeService.getStoreDetail(storeId);
         return generateTimeSlots(store);
+    }
+
+    // ================= [점주 전용: 상태 제어 로직 추가] =================
+
+    // [v1.0.4 추가] 웨이팅 상태 변경 (ING, FINISH 등)
+    @PostMapping("/wait/updateStatus")
+    public String updateWaitStatus(@RequestParam("wait_id") int waitId, 
+                                 @RequestParam("status") String status) {
+        waitService.update_wait_status(waitId, status);
+        return "redirect:/member/mypage";
+    }
+
+    // [v1.0.4 추가] 예약 상태 변경 (ING, FINISH 등)
+    @PostMapping("/book/updateStatus")
+    public String updateBookStatus(@RequestParam("book_id") int bookId, 
+                                 @RequestParam("status") String status) {
+        bookService.update_book_status(bookId, status);
+        return "redirect:/member/mypage";
     }
 
     // ================= [가게 정보 관리] =================

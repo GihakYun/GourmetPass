@@ -13,10 +13,14 @@
 	<security:http auto-config="true" use-expressions="true">
 		<security:csrf disabled="false" />
 
-		<security:intercept-url pattern="/member/mypage**" access="hasAnyRole('ROLE_USER', 'ROLE_OWNER')" />
-		<security:intercept-url pattern="/member/edit**" access="hasAnyRole('ROLE_USER', 'ROLE_OWNER')" />
-		
-		<security:intercept-url pattern="/store/list" access="permitAll" />
+	<security:intercept-url
+		pattern="/member/mypage**"
+		access="hasAnyRole('ROLE_USER', 'ROLE_OWNER')" />
+	<security:intercept-url pattern="/member/edit**"
+		access="hasAnyRole('ROLE_USER', 'ROLE_OWNER')" />
+
+	<security:intercept-url pattern="/store/list"
+		access="permitAll" />
 		<security:intercept-url pattern="/store/detail" access="permitAll" />
 		<security:intercept-url pattern="/store/api/**" access="permitAll" />
 		

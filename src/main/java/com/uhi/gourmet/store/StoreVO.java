@@ -6,26 +6,24 @@ import lombok.Setter;
 @Setter
 @Getter
 public class StoreVO {
-    private int store_id;           // 가게 고유번호 (PK)
-    private String user_id;         // 점주 아이디 (FK)
-    private String store_name;      // 상호명
-    private String store_category;  // 카테고리 (한식, 중식...)
-    private String store_tel;       // 가게 전화번호
-    private String store_zip;       // 가게 우편번호
-    private String store_addr1;     // 가게 주소
-    private String store_addr2;     // 가게 상세주소
-    private Double store_lat;       // 위도
-    private Double store_lon;       // 경도
-    private int store_cnt;          // 조회수 (기본 0)
-    private String store_desc;      // 설명 (CLOB)
-    private String store_img;       // 이미지 경로
-    
-    // 예약 시간 설정용 필드
-    private String open_time;       // 예: "09:00"
-    private String close_time;      // 예: "22:00"
-    private int res_unit;           // 예약 단위 (분)
+    private int store_id;
+    private String user_id;
+    private String store_name;
+    private String store_category;
+    private String store_tel;
+    private String store_zip;
+    private String store_addr1;
+    private String store_addr2;
+    private Double store_lat;
+    private Double store_lon;
+    private int store_cnt;          // 조회수 (DB 컬럼명 일치)
+    private String store_desc;
+    private String store_img;
+    private String open_time;
+    private String close_time;
+    private int res_unit;
 
-    // [추가] 리뷰 통계 정보 (가게 상세페이지용)
+    // [통계용 추가 필드] 명칭 통일 규칙 적용
     private double avg_rating;      // 평균 별점
-    private int review_count;       // 총 리뷰 수
+    private int review_cnt;         // _cnt로 변경 (기존 review_count 제거)
 }

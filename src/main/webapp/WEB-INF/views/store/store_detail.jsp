@@ -13,7 +13,7 @@
         <h1 class="store-main-title">🏠 ${store.store_name}</h1>
         <div class="store-meta-info">
             <span class="badge-cat">${store.store_category}</span>
-            <span class="rating-box">⭐ ${store.avg_rating} <small>(${store.review_count}개의 리뷰)</small></span>
+            <span class="rating-box">⭐ ${store.avg_rating} <small>(${store.review_cnt}개의 리뷰)</small></span>
         </div>
     </div>
     
@@ -131,7 +131,7 @@
     <hr class="wire-hr bold-hr">
 
     <div id="review-section">
-        <h3 class="section-title">💬 고객 리뷰 (${store.review_count})</h3>
+        <h3 class="section-title">💬 고객 리뷰 (${store.review_cnt})</h3>
         <div class="review-list-container">
             <c:choose>
                 <c:when test="${not empty reviewList}">

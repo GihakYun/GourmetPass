@@ -1,7 +1,10 @@
+/* com/uhi/gourmet/member/MemberController.java */
 package com.uhi.gourmet.member;
 
 import java.security.Principal;
+import java.util.ArrayList; // 추가
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -52,8 +55,6 @@ public class MemberController {
         model.addAttribute("kakaoJsKey", kakaoJsKey);
     }
 
-    // ================= [로그인] =================
-
     @GetMapping("/login")
     public String loginPage(@RequestParam(value = "error", required = false) String error, Model model) {
         if (error != null) {
@@ -61,8 +62,6 @@ public class MemberController {
         }
         return "member/login";
     }
-
-    // ================= [회원가입 단계별 경로] =================
 
     @GetMapping("/signup/select")
     public String signupSelectPage() {
@@ -111,8 +110,6 @@ public class MemberController {
         return "redirect:/member/login";
     }
 
-    // ================= [마이페이지 및 기타] =================
-
     @GetMapping("/mypage")
     public String mypage(Principal principal, Model model, HttpServletRequest request) {
         String user_id = principal.getName();
@@ -121,34 +118,67 @@ public class MemberController {
 
         if (request.isUserInRole("ROLE_OWNER")) {
             StoreVO store = storeMapper.getStoreByUserId(user_id);
-            
             if (store != null) {
                 model.addAttribute("store", store);
                 model.addAttribute("menuList", storeMapper.getMenuList(store.getStore_id()));
-                
-                List<BookVO> store_book_list = book_service.get_store_book_list(store.getStore_id());
-                model.addAttribute("store_book_list", store_book_list);
-
-                // [추가] 점주의 가게에 달린 모든 리뷰 리스트를 가져와 모델에 담습니다.
-                List<ReviewVO> store_review_list = review_service.getStoreReviews(store.getStore_id());
-                model.addAttribute("store_review_list", store_review_list);
-
+                model.addAttribute("store_book_list", book_service.get_store_book_list(store.getStore_id()));
+                model.addAttribute("store_review_list", review_service.getStoreReviews(store.getStore_id()));
             } else {
                 model.addAttribute("noStoreMsg", "등록된 매장 정보가 없습니다.");
             }
             return "member/mypage_owner";
         } else {
-            List<BookVO> my_book_list = book_service.get_my_book_list(user_id);
-            model.addAttribute("my_book_list", my_book_list);
-            
-            List<WaitVO> my_wait_list = wait_service.get_my_wait_list(user_id);
-            model.addAttribute("my_wait_list", my_wait_list);
-            
             List<ReviewVO> my_review_list = review_service.getMyReviews(user_id);
             model.addAttribute("my_review_list", my_review_list);
-            
-            return "member/mypage";
+            return "member/mypage"; 
         }
+    }
+
+    // [v1.0.8 수정] NPE 방지를 위한 방어 코드 추가
+    @GetMapping("/myStatus")
+    public String myStatus(Principal principal, Model model) {
+        // Principal 체크 (보안 강화)
+        if (principal == null) return "redirect:/member/login";
+        
+        String user_id = principal.getName();
+        
+        List<BookVO> my_book_list = book_service.get_my_book_list(user_id);
+        List<WaitVO> my_wait_list = wait_service.get_my_wait_list(user_id);
+        
+        // [NPE 방지] 리스트가 null인 경우 빈 리스트로 초기화
+        if (my_book_list == null) my_book_list = new ArrayList<>();
+        if (my_wait_list == null) my_wait_list = new ArrayList<>();
+        
+        // 1. 현재 이용 중인 서비스 (WAITING, CALLED, ING)
+        model.addAttribute("activeWait", my_wait_list.stream()
+            .filter(w -> "WAITING".equals(w.getWait_status()) || "CALLED".equals(w.getWait_status()) || "ING".equals(w.getWait_status()))
+            .findFirst().orElse(null));
+            
+        model.addAttribute("activeBook", my_book_list.stream()
+            .filter(b -> "RESERVED".equals(b.getBook_status()) || "ING".equals(b.getBook_status()))
+            .findFirst().orElse(null));
+
+        // 2. 방문 완료 히스토리 (FINISH)
+        List<WaitVO> finishedWaits = my_wait_list.stream()
+            .filter(w -> "FINISH".equals(w.getWait_status()))
+            .collect(Collectors.toList());
+        
+        List<BookVO> finishedBooks = my_book_list.stream()
+            .filter(b -> "FINISH".equals(b.getBook_status()))
+            .collect(Collectors.toList());
+
+        model.addAttribute("finishedWaits", finishedWaits);
+        model.addAttribute("finishedBooks", finishedBooks);
+        
+        // 3. 미작성 리뷰 개수 계산
+        long pendingReviewCount = finishedWaits.stream().filter(w -> w.getReview_id() == null).count()
+                                + finishedBooks.stream().filter(b -> b.getReview_id() == null).count();
+        model.addAttribute("pendingReviewCount", pendingReviewCount);
+        
+        model.addAttribute("my_book_list", my_book_list);
+        model.addAttribute("my_wait_list", my_wait_list);
+        
+        return "member/myStatus"; 
     }
 
     @GetMapping("/edit")

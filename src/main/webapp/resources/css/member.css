@@ -35,15 +35,23 @@ th {
     border-bottom: 2px solid #333; /* 헤더 구분선 강조 */
 }
 
-/* 열 너비 조절용 유틸리티 클래스 */
+/* [v1.0.4 보강] 열 너비 조절용 유틸리티 클래스 */
+/* 기존 내용을 아래로 교체 또는 추가 */
+.w-3  { width: 3%; }  /* 추가: 번호/인원용 */
 .w-5  { width: 5%; }
+.w-7  { width: 7%; }
+.w-8  { width: 8%; }
 .w-10 { width: 10%; }
 .w-15 { width: 15%; }
 .w-20 { width: 20%; }
 .w-25 { width: 25%; }
 .w-30 { width: 30%; }
 .w-40 { width: 40%; }
+.w-45 { width: 45%; }
 .w-50 { width: 50%; }
+.w-58 { width: 58%; }
+.w-60 { width: 60%; }
+.w-70 { width: 70%; } /* 추가: 버튼 3개 수용을 위한 확장 */
 
 /* 정보 테이블 (마이페이지용) */
 .info-table {
@@ -287,3 +295,24 @@ input[readonly] {
 .withdraw-section { 
     margin-top: 60px; padding-top: 25px; border-top: 2px dashed #eee; text-align: right; 
 }
+
+/* =========================================
+   10. [v1.0.4] 매장 관리 (manage.jsp) 전용 스타일
+   ========================================= */
+.wait-color { color: #2f855a; border-color: #2f855a; }
+.book-color { color: #e65100; border-color: #e65100; }
+
+/* 상태 뱃지 */
+.badge-status { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; color: #fff; display: inline-block; }
+.bg-wait { background-color: #ffc107; color: #333; }   /* 대기중 (노랑) */
+.bg-call { background-color: #17a2b8; }                /* 호출/입장 (파랑) */
+.bg-finish { background-color: #28a745; }              /* 완료 (초록) */
+.bg-cancel { background-color: #6c757d; }              /* 취소/노쇼 (회색) */
+
+/* 관리 버튼 그룹 */
+.action-btn-group { display: flex; gap: 2px; justify-content: center; align-items: center; }
+.action-btn-group button { font-size: 11px; padding: 5px 4px; white-space: nowrap; min-width: 55px; }
+.p-tight { padding: 12px 4px !important; }
+/* 잠금 메시지 */
+.lock-msg { font-size: 12px; color: #dc3545; font-weight: bold; }
+.empty-msg { padding: 40px; text-align: center; color: #999; }

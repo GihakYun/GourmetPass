@@ -16,7 +16,7 @@
     width: 60%; 
     max-width: 500px; 
     padding: 15px; 
-    border: 2px solid #333; /* 1px -> 2px 교정 */
+    border: 2px solid #333; 
     border-radius: 10px; 
     font-size: 16px; 
     outline: none; 
@@ -31,12 +31,17 @@
     cursor: pointer; 
 }
 
-/* 2. 카테고리 그리드: 테두리 두께 통일 */
-.category-container { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 50px; }
+/* 2. 카테고리 그리드 */
+.category-container { 
+    display: grid; 
+    grid-template-columns: repeat(6, 1fr); 
+    gap: 12px; 
+    margin-bottom: 50px; 
+}
 .btn-category { 
     padding: 15px 0; 
-    border: 2px solid #333; /* 1px -> 2px 교정 */
-    border-radius: 12px; /* 곡률 통일감 부여 */
+    border: 2px solid #333; 
+    border-radius: 12px; 
     background: #fff; 
     font-weight: bold; 
     cursor: pointer; 
@@ -46,31 +51,82 @@
 .btn-category:hover { background: #f8f8f8; transform: translateY(-2px); }
 .btn-all { background: #eee !important; }
 
-/* 3. 인기 맛집 섹션: 2px/15px 카드 스타일 통일 */
+/* 3. 인기 맛집 섹션 */
 .section-divider { border: 0; border-top: 1px solid #eee; margin: 50px 0; }
 .section-title { text-align: left; font-size: 22px; font-weight: bold; margin-bottom: 25px; }
-.store-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+
+.store-grid { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 25px; 
+}
 
 .store-card { 
-    border: 2px solid #333; /* 1px 회색 -> 2px 검정 교정 */
-    border-radius: 15px; /* 프로필 카드와 동일한 곡률 */
+    border: 2px solid #333; 
+    border-radius: 15px; 
     overflow: hidden; 
     background: #fff; 
     cursor: pointer; 
     transition: 0.2s; 
     text-align: left; 
+    display: flex;
+    flex-direction: column;
 }
-.store-card:hover { transform: translateY(-5px); box-shadow: 5px 5px 0px #333; } /* 와이어프레임풍 그림자 추가 */
+.store-card:hover { transform: translateY(-5px); box-shadow: 5px 5px 0px #333; }
 
-.store-img-box { width: 100%; height: 180px; background: #eee; display: flex; align-items: center; justify-content: center; border-bottom: 2px solid #333; }
+.store-img-box { 
+    width: 100%; 
+    height: 180px; 
+    background: #eee; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    border-bottom: 2px solid #333; 
+}
 .store-img-box img { width: 100%; height: 100%; object-fit: cover; }
 .no-img-text { color: #ccc; font-size: 14px; }
 
-.store-info { padding: 20px; }
+.store-info { padding: 20px; flex-grow: 1; }
 .store-cat { font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase; }
 .store-name-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .store-name { font-size: 18px; font-weight: bold; margin: 0; }
 .hot-badge { background: #ff3d00; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
 .store-addr { font-size: 13px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.store-stats { margin-top: 15px; font-size: 13px; color: #ff3d00; font-weight: bold; }
-.empty-msg { grid-column: span 3; padding: 80px; text-align: center; color: #999; border: 2px dashed #333; border-radius: 15px; }
+
+/* [v1.0.4 수정] 별점 및 조회수 통계 영역 스타일 보강 */
+.store-stats { 
+    margin-top: 15px; 
+    font-size: 13px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+}
+.stat-rating { color: #ff3d00; font-weight: bold; }
+.stat-views { color: #888; font-weight: normal; font-size: 12px; }
+
+.empty-msg { grid-column: span 3; padding: 80px; text-align: center; color: #999; border: 2px solid #333; border-radius: 15px; }
+
+/* ============================================================
+   반응형 대응: 카테고리와 맛집 카드의 정렬 동기화 및 세로 스택
+   ============================================================ */
+
+@media (max-width: 1100px) {
+    .category-container { grid-template-columns: repeat(4, 1fr); }
+    .store-grid { grid-template-columns: repeat(2, 1fr); }
+    .empty-msg { grid-column: span 2; }
+}
+
+@media (max-width: 850px) {
+    .main-wrapper { width: 90%; }
+    .category-container { grid-template-columns: repeat(2, 1fr); }
+    .store-grid { grid-template-columns: 1fr; }
+    .empty-msg { grid-column: span 1; }
+    .store-img-box { height: 250px; } 
+}
+
+@media (max-width: 500px) {
+    .search-form { flex-direction: column; }
+    .search-input { width: 100%; max-width: none; }
+    .category-container { grid-template-columns: 1fr; }
+    .btn-category { padding: 12px 0; }
+}

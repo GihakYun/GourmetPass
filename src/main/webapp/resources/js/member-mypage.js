@@ -1,6 +1,6 @@
 /**
  * 마이페이지 공통 스크립트 (일반 회원 / 점주 공용) [v1.0.4]
- * 기능: 회원 탈퇴, 메뉴 삭제, 웨이팅 취소, 내역 토글, 실시간 웹소켓 알림
+ * 기능: 회원 탈퇴, 메뉴 삭제, 웨이팅 취소, 내역 토글, 실시간 웹소켓 알림, 스크롤 위치 유지
  */
 
 // 1. 회원 탈퇴 요청
@@ -98,7 +98,7 @@ function initMyPageWebSocket(userId, role, storeId) {
     stompClient.connect({}, function (frame) {
         console.log('WebSocket Connected: ' + frame);
 
-        if (role === 'ROLE_USER') {
+        if (role === 'ROLE_USER' && userId) {
             stompClient.subscribe('/topic/wait/' + userId, function (message) {
                 showNotification("🔔 알림: " + message.body);
             });
@@ -116,3 +116,36 @@ function showNotification(message) {
     alert(message);
     location.reload();
 }
+
+// ========================================================
+// [v1.0.4 추가] 페이지 로드 시 공통 실행 로직 (JSP에서 이관됨)
+// 1. 스크롤 위치 복원 및 저장 (점주 관리 페이지 편의성)
+// 2. 웹소켓 자동 연결
+// ========================================================
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. 스크롤 위치 관리
+    const savedScrollPos = sessionStorage.getItem("manageScrollPos");
+    if (savedScrollPos) {
+        window.scrollTo(0, parseInt(savedScrollPos));
+        sessionStorage.removeItem("manageScrollPos");
+    }
+
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function() {
+            sessionStorage.setItem("manageScrollPos", window.scrollY);
+        });
+    });
+
+    // 2. 웹소켓 초기화 (APP_CONFIG가 존재할 경우에만 실행)
+    if (typeof APP_CONFIG !== 'undefined') {
+        // APP_CONFIG 내의 값 존재 여부에 따라 null 처리
+        const userId = APP_CONFIG.userId || null;
+        const role = APP_CONFIG.role || null;
+        const storeId = APP_CONFIG.storeId || null;
+
+        if (typeof initMyPageWebSocket === 'function') {
+            initMyPageWebSocket(userId, role, storeId);
+        }
+    }
+});
