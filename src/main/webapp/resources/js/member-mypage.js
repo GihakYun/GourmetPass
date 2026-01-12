@@ -1,13 +1,12 @@
 /**
- * 마이페이지 공통 스크립트 (일반 회원 / 점주 공용)
- * 기능: 회원 탈퇴, 메뉴 삭제, 실시간 웹소켓 알림 수신
+ * 마이페이지 공통 스크립트 (일반 회원 / 점주 공용) [v1.0.4]
+ * 기능: 회원 탈퇴, 메뉴 삭제, 웨이팅 취소, 내역 토글, 실시간 웹소켓 알림
  */
 
-// 1. 회원 탈퇴 요청 (MemberController.java의 @PostMapping("/delete")와 연동)
+// 1. 회원 탈퇴 요청
 function dropUser(userId) {
     if (!confirm("정말로 탈퇴하시겠습니까? 모든 정보가 삭제됩니다.")) return;
 
-    // fetch를 이용한 AJAX 요청
     fetch(APP_CONFIG.contextPath + '/member/delete', {
         method: 'POST',
         headers: {
@@ -51,7 +50,45 @@ function deleteMenu(menuId) {
     form.submit();
 }
 
-// 3. 웹소켓 실시간 알림 설정 (로드맵 1단계 및 3, 4단계)
+// 3. [v1.0.4 추가] 웨이팅 취소 함수 (myStatus.jsp 전용)
+function cancelWait(waitId) {
+    if(!confirm("웨이팅을 취소하시겠습니까?")) return;
+    
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = APP_CONFIG.contextPath + "/wait/cancel";
+    
+    const inputId = document.createElement("input");
+    inputId.type = "hidden"; 
+    inputId.name = "wait_id"; 
+    inputId.value = waitId;
+    
+    const inputCsrf = document.createElement("input");
+    inputCsrf.type = "hidden"; 
+    inputCsrf.name = APP_CONFIG.csrfName; 
+    inputCsrf.value = APP_CONFIG.csrfToken;
+    
+    form.appendChild(inputId);
+    form.appendChild(inputCsrf);
+    document.body.appendChild(form);
+    form.submit();
+}
+
+// 4. [v1.0.4 추가] 전체 내역 토글 함수 (myStatus.jsp 전용)
+function toggleHistory() {
+    const area = document.getElementById('full-history-area');
+    const btn = document.getElementById('history-toggle-btn');
+    
+    if(area.style.display === 'none') {
+        area.style.display = 'block';
+        btn.innerText = '내역 닫기 ▲';
+    } else {
+        area.style.display = 'none';
+        btn.innerText = '전체 이용 내역 보기 ▼';
+    }
+}
+
+// 5. 웹소켓 실시간 알림 설정
 let stompClient = null;
 
 function initMyPageWebSocket(userId, role, storeId) {
@@ -61,26 +98,21 @@ function initMyPageWebSocket(userId, role, storeId) {
     stompClient.connect({}, function (frame) {
         console.log('WebSocket Connected: ' + frame);
 
-        // [일반 회원] 본인 아이디 채널 구독: 입장 호출 알림 수신
         if (role === 'ROLE_USER') {
             stompClient.subscribe('/topic/wait/' + userId, function (message) {
                 showNotification("🔔 알림: " + message.body);
             });
         }
 
-        // [점주] 매장 채널 구독: 새로운 웨이팅/예약 접수 알림 수신
         if (role === 'ROLE_OWNER' && storeId) {
             stompClient.subscribe('/topic/store/' + storeId, function (message) {
                 showNotification("📩 새 주문: " + message.body);
-                // 실시간 리스트 갱신이 필요할 경우 여기서 reload 혹은 Ajax 호출
             });
         }
     });
 }
 
-// 알림 표시 함수 (디자인에 맞춰 토스트 메시지 등으로 확장 가능)
 function showNotification(message) {
     alert(message);
-    // 상태 변경을 시각적으로 보여주기 위해 페이지 리로드 가능
     location.reload();
 }

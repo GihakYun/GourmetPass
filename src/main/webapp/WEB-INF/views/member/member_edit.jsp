@@ -3,7 +3,6 @@
 
 <jsp:include page="../common/header.jsp" />
 
-<%-- [v1.0.4] 외부 자산 로드 --%>
 <link rel="stylesheet" href="<c:url value='/resources/css/member.css'/>">
 <script src="<c:url value='/resources/js/common.js'/>"></script>
 <script src="<c:url value='/resources/js/address-api.js'/>"></script>
@@ -23,41 +22,42 @@
         <table class="edit-table">
             <tr>
                 <th>아이디</th>
-                <td><input type="text" name="user_id" id="user_id" value="${member.user_id}" class="signup-input" readonly></td>
+                <td><input type="text" name="user_id" id="user_id" value="${member.user_id}" readonly></td>
             </tr>
             <tr>
                 <th>새 비밀번호</th>
-                <td><input type="password" name="user_pw" id="user_pw" class="signup-input" placeholder="변경 시에만 입력하세요"></td>
+                <td><input type="password" name="user_pw" id="user_pw" placeholder="변경 시에만 입력하세요"></td>
             </tr>
             <tr>
                 <th>비밀번호 확인</th>
                 <td>
-                    <input type="password" id="user_pw_confirm" class="signup-input" placeholder="비밀번호 재입력">
-                    <div id="pwCheckMsg" class="msg-box"></div>
+                    <input type="password" id="user_pw_confirm" placeholder="비밀번호 재입력">
+                    <div id="pwCheckMsg"></div>
                 </td>
             </tr>
             <tr>
                 <th>성명</th>
-                <td><input type="text" name="user_nm" value="${member.user_nm}" class="signup-input" required></td>
+                <td><input type="text" name="user_nm" value="${member.user_nm}" required></td>
             </tr>
             <tr>
                 <th>전화번호</th>
-                <td><input type="text" name="user_tel" value="${member.user_tel}" class="signup-input" required oninput="autoHyphen(this)" maxlength="13"></td>
+                <td><input type="text" name="user_tel" value="${member.user_tel}" required oninput="autoHyphen(this)" maxlength="13"></td>
             </tr>
             <tr>
                 <th>주소</th>
                 <td>
-                    <div class="input-row">
-                        <input type="text" name="user_zip" id="user_zip" value="${member.user_zip}" class="signup-input" style="width: 120px; flex: none;" readonly>
-                        <button type="button" onclick="execDaumPostcode('user')" class="btn-wire">주소검색</button>
+                    <div class="input-row" style="display: flex; gap: 10px; margin-bottom: 8px;">
+                        <input type="text" name="user_zip" id="user_zip" value="${member.user_zip}" style="width: 120px; flex: none;" readonly>
+                        <button type="button" onclick="execDaumPostcode('user')" class="btn-action">주소검색</button>
                     </div>
-                    <input type="text" name="user_addr1" id="user_addr1" value="${member.user_addr1}" class="signup-input" style="margin-top:8px;" readonly>
-                    <input type="text" name="user_addr2" id="user_addr2" value="${member.user_addr2}" class="signup-input" style="margin-top:8px;">
-                    <div id="coordStatus" class="msg-box" style="color: #2f855a; margin-top: 8px;">주소 변경 시 좌표가 자동 갱신됩니다.</div>
+                    <input type="text" name="user_addr1" id="user_addr1" value="${member.user_addr1}" style="margin-bottom:8px;" readonly>
+                    <input type="text" name="user_addr2" id="user_addr2" value="${member.user_addr2}" placeholder="상세 주소 입력">
+                    <div id="coordStatus" class="msg-ok">주소 변경 시 좌표가 자동 갱신됩니다.</div>
                 </td>
             </tr>
         </table>
 
+        <%-- 하단 버튼 배치: 2:1 비율 및 v1.0.4 와이어프레임 디자인 적용 --%>
         <div class="btn-group">
             <button type="submit" class="btn-submit">정보 수정 완료</button>
             <a href="<c:url value='/member/mypage'/>" class="btn-cancel">취소</a>
