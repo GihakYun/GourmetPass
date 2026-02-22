@@ -93,15 +93,17 @@ public class PaymentServiceImpl implements PaymentService{
 	public boolean refund(String imp_Uid) throws IamportResponseException, IOException {
 		
 		IamportResponse<Payment> response;
-		CancelData cancel = new CancelData(imp_Uid, true);	// CancelData에 impUid 값 적용
-		response = iamportClient.cancelPaymentByImpUid(cancel);	// CancelData로 iamportclient에 환불 기능특정
+		// CancelDataにimp_uidを設定
+		CancelData cancel = new CancelData(imp_Uid, true);
+		// CancelDataを用いてiamportClientの返金機能を呼び出し
+		response = iamportClient.cancelPaymentByImpUid(cancel);
 		
-		if(response.getResponse() != null) {	// 환불 로직 실행
-			System.out.println("환불 성공............");
+		if(response.getResponse() != null) {	// 返金機能を実行
+	        System.out.println("返金成功処理を完了しました。");
 			return true;
 			
 		} else {
-			System.out.println("환불 실패............");
+			System.out.println("返金処理に失敗しました。");
 			return false;
 		}
 		

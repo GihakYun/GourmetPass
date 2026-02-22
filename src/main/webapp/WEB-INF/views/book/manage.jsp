@@ -101,6 +101,7 @@
 	<div class="dashboard-card">
 		<div class="card-header-flex">
 			<h3 class="card-title-book">📅 오늘 예약 현황</h3>
+			<input type="date" id="dateFilter" class="form-control" style="width:200px;">
 			<span class="badge-wire">총 ${store_book_list.size()}건</span>
 		</div>
 
@@ -116,9 +117,10 @@
 			</thead>
 			<tbody>
 				<c:forEach var="book" items="${store_book_list}">
+					<%-- 날짜 비교를 위해 data-date 속성에 YYYY-MM-DD 형식으로 날짜를 넣습니다 --%>
+    				<fmt:formatDate value="${book.book_date}" pattern="yyyy-MM-dd" var="rowDate"/>
 					<tr>
-						<td align="center"><b><fmt:formatDate
-									value="${book.book_date}" pattern="HH:mm" /></b></td>
+						<td align="center"><b><fmt:formatDate value="${book.book_date}" pattern="HH:mm" /></b></td>
 						<td align="center">${book.user_id}</td>
 						<td align="center">${book.people_cnt}명</td>
 						<td align="center"><span

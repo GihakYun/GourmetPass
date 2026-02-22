@@ -48,6 +48,8 @@ public class WaitController {
         }
         
         vo.setUser_id(principal.getName());
+        
+        
         wait_service.register_wait(vo);
         
         // 점주에게 실시간 알림 전송 (새로운 웨이팅 발생)

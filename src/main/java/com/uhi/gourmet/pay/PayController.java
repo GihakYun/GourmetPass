@@ -47,6 +47,7 @@ public class PayController {
 	@PostMapping("/api/v1/payment/complete")
 	public ResponseEntity<?> paymentVal(@RequestParam String impUid, String apiKey, String apiSecret) throws IamportResponseException, IOException{
 		System.out.println("Controller paymentVal()..................");
+		System.out.println(impUid);
 		
 		if(service.paymentVal(impUid)) {
 			int payId = service.getPayIdByImpUid(impUid);	// impUid로 payId를 가져옴

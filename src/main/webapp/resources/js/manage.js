@@ -1,12 +1,10 @@
-
-
-
 $(document).ready(function() {
 
 	APP_CONFIG.userId = "<sec:authentication property='principal.username'/>";
     APP_CONFIG.role = "ROLE_OWNER";
 	console.log("현재 설정:", APP_CONFIG);
 
+	
 
     // 노쇼 버튼 클릭 시 이벤트
     $(".noshow-btn").on("click", function() {
